@@ -25,11 +25,10 @@ const VoiceAgent = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const conversationTimerRef = useRef(null);
-  const username = localStorage.getItem("username") || "User";
 
   useEffect(() => {
     // Check authentication
-    if (!localStorage.getItem("isAuthenticated")) {
+    if (!localStorage.getItem("authToken")) {
       navigate("/");
       return;
     }
@@ -164,8 +163,7 @@ const VoiceAgent = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("username");
+    localStorage.removeItem("authToken");
     navigate("/");
   };
 
@@ -186,7 +184,7 @@ const VoiceAgent = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">Voice Assistant</h1>
-              <p className="text-muted-foreground">Welcome back, {username}</p>
+              <p className="text-muted-foreground">Welcome back, User</p>
             </div>
           </div>
           

@@ -1,11 +1,18 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Mic } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import authService from "@/services/authService";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -14,32 +21,56 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate login - replace with actual authentication
-    if (username && password) {
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("username", username);
-      
+    
+    if (!username || !password) {
       toast({
-        title: "Login Successful",
-        description: "Welcome to your Voice Assistant",
-      });
-      
-      setTimeout(() => {
-        navigate("/agent");
-      }, 1000);
-    } else {
-      toast({
-        title: "Login Failed",
+        title: "Error",
         description: "Please enter both username and password",
         variant: "destructive",
       });
+      return;
     }
-    
-    setIsLoading(false);
+
+    setIsLoading(true);
+
+    try {
+      // Call authService to authenticate the user
+      const response = await authService.login({
+        username,
+        password
+      });
+
+      if (response.token) {
+        localStorage.setItem("authToken", response.token);
+      }
+
+      // Show success message
+      toast({
+        title: "Login Successful",
+        description: `Welcome back, ${username}!`,
+      });
+
+      // Redirect to agent page after a short delay
+      setTimeout(() => {
+        navigate("/agent");
+      }, 1000);
+      
+    } catch (error: any) {
+      console.error('Login error:', error);
+      
+      // Extract error message from the response or use a default message
+      const errorMessage = error.response?.data?.message || "Invalid username or password";
+      
+      toast({
+        title: "Login Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -51,14 +82,18 @@ const Login = () => {
               <Mic className="w-8 h-8 text-background" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Voice Assistant</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Voice Assistant
+          </h1>
           <p className="text-muted-foreground">Powered by Bland.ai</p>
         </div>
 
         <Card className="card-elevated border-border/50">
           <CardHeader className="text-center">
             <CardTitle className="text-foreground">Welcome Back</CardTitle>
-            <CardDescription>Sign in to access your voice assistant</CardDescription>
+            <CardDescription>
+              Sign in to access your voice assistant
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
@@ -74,7 +109,7 @@ const Login = () => {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -95,13 +130,16 @@ const Login = () => {
               >
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
+
+              <p className="text-center text-sm text-muted-foreground mt-4">
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-primary hover:underline">
+                  Sign up
+                </Link>
+              </p>
             </form>
           </CardContent>
         </Card>
-
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          Demo credentials: Any username and password will work
-        </p>
       </div>
     </div>
   );
