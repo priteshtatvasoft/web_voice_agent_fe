@@ -6,11 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mic, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import authService from '@/services/authService';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: '',
-    email: '',
     password: '',
     confirmPassword: ''
   });
@@ -38,30 +38,50 @@ const Signup = () => {
       return;
     }
 
+    if (formData.password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
-    // Simulate signup - in real app this would connect to your backend
-    setTimeout(() => {
-      if (formData.username && formData.email && formData.password) {
-        localStorage.setItem('blandai_user', JSON.stringify({ 
-          username: formData.username,
-          email: formData.email,
-          loggedIn: true 
-        }));
-        toast({
-          title: "Signup successful!",
-          description: "Your account has been created successfully.",
-        });
-        navigate('/agent');
-      } else {
-        toast({
-          title: "Signup failed",
-          description: "Please fill in all required fields",
-          variant: "destructive",
-        });
-      }
+    try {
+      // Call the authService to register the user
+      await authService.signup({
+        username: formData.username,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword
+      });
+
+      // Show success message
+      toast({
+        title: "Success!",
+        description: "Your account has been created successfully. Please log in.",
+      });
+
+      // Redirect to login page after a short delay
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      
+      // Show error message from the server or a generic error
+      const errorMessage = error.response?.message || 'Failed to create account. Please try again.';
+      
+      toast({
+        title: "Signup failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

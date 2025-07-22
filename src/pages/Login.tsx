@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mic, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import authService from '@/services/authService';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -16,26 +17,50 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!username || !password) {
+      toast({
+        title: "Error",
+        description: "Please enter both username and password",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
-    // Simulate authentication - in real app this would connect to Supabase
-    setTimeout(() => {
-      if (username && password) {
-        localStorage.setItem('blandai_user', JSON.stringify({ username, loggedIn: true }));
-        toast({
-          title: "Login successful",
-          description: "Welcome to Bland.ai Web Agent",
-        });
+    try {
+      // Call the authService to login the user
+      const response = await authService.login({
+        username,
+        password
+      });
+
+      // Show success message
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${username}!`,
+      });
+
+      // Redirect to agent page after a short delay
+      setTimeout(() => {
         navigate('/agent');
-      } else {
-        toast({
-          title: "Login failed",
-          description: "Please enter valid credentials",
-          variant: "destructive",
-        });
-      }
+      }, 1000);
+
+    } catch (error: any) {
+      console.error('Login error:', error);
+      
+      // Show error message from the server or a generic error
+      const errorMessage = error.response?.message || 'Invalid username or password';
+      
+      toast({
+        title: "Login failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
