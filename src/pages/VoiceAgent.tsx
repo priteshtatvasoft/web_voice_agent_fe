@@ -3,25 +3,32 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mic, MicOff, Phone, PhoneOff, Settings, LogOut, Volume2, Info } from "lucide-react";
+import {
+  Mic,
+  MicOff,
+  Phone,
+  PhoneOff,
+  LogOut,
+  Volume2,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import VoiceVisualizer from "@/components/VoiceVisualizer";
 import TranscriptDisplay from "@/components/TranscriptDisplay";
 import PromptDisplay from "@/components/PromptDisplay";
-import IntegrationInfo from "@/components/IntegrationInfo";
 
 const VoiceAgent = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState([]);
-  const [currentPrompt, setCurrentPrompt] = useState("Welcome! I'm your AI assistant. How can I help you today?");
+  const [currentPrompt, setCurrentPrompt] = useState(
+    "Welcome! I'm your AI assistant. How can I help you today?"
+  );
   const [connectionStatus, setConnectionStatus] = useState("disconnected");
   const [conversationDuration, setConversationDuration] = useState(0);
   const [hasPermission, setHasPermission] = useState(false);
-  
+
   const navigate = useNavigate();
   const { toast } = useToast();
   const conversationTimerRef = useRef(null);
@@ -48,8 +55,8 @@ const VoiceAgent = () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setHasPermission(true);
       // Stop the stream immediately - we just needed permission
-      stream.getTracks().forEach(track => track.stop());
-      
+      stream.getTracks().forEach((track) => track.stop());
+
       toast({
         title: "Microphone Access Granted",
         description: "You can now start voice conversations",
@@ -72,24 +79,29 @@ const VoiceAgent = () => {
 
     setIsConnected(true);
     setConnectionStatus("connecting");
-    
+
     // Simulate connection to Bland.ai
     setTimeout(() => {
       setConnectionStatus("connected");
-      setCurrentPrompt("Great! I'm listening. What would you like to talk about?");
-      
+      setCurrentPrompt(
+        "Great! I'm listening. What would you like to talk about?"
+      );
+
       // Start conversation timer
       conversationTimerRef.current = setInterval(() => {
-        setConversationDuration(prev => prev + 1);
+        setConversationDuration((prev) => prev + 1);
       }, 1000);
 
       // Add initial system message
-      setTranscript(prev => [...prev, {
-        id: Date.now(),
-        speaker: "Assistant",
-        text: "Hello! I'm your AI voice assistant. I'm ready to chat with you.",
-        timestamp: new Date().toLocaleTimeString()
-      }]);
+      setTranscript((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          speaker: "Assistant",
+          text: "Hello! I'm your AI voice assistant. I'm ready to chat with you.",
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ]);
 
       toast({
         title: "Connected to Bland.ai",
@@ -103,39 +115,49 @@ const VoiceAgent = () => {
     setIsListening(false);
     setIsSpeaking(false);
     setConnectionStatus("disconnected");
-    
+
     if (conversationTimerRef.current) {
       clearInterval(conversationTimerRef.current);
     }
 
     toast({
       title: "Conversation Ended",
-      description: `Duration: ${Math.floor(conversationDuration / 60)}:${(conversationDuration % 60).toString().padStart(2, '0')}`,
+      description: `Duration: ${Math.floor(conversationDuration / 60)}:${(
+        conversationDuration % 60
+      )
+        .toString()
+        .padStart(2, "0")}`,
     });
 
     setConversationDuration(0);
-    setCurrentPrompt("Conversation ended. Start a new conversation to continue chatting.");
+    setCurrentPrompt(
+      "Conversation ended. Start a new conversation to continue chatting."
+    );
   };
 
   const toggleListening = () => {
     if (!isConnected) return;
-    
+
     setIsListening(!isListening);
-    
+
     if (!isListening) {
       // Simulate speech recognition
       setTimeout(() => {
-        const userMessage = "This is a simulated user message for demonstration";
-        setTranscript(prev => [...prev, {
-          id: Date.now(),
-          speaker: "You",
-          text: userMessage,
-          timestamp: new Date().toLocaleTimeString()
-        }]);
-        
+        const userMessage =
+          "This is a simulated user message for demonstration";
+        setTranscript((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            speaker: "You",
+            text: userMessage,
+            timestamp: new Date().toLocaleTimeString(),
+          },
+        ]);
+
         setIsListening(false);
         setIsSpeaking(true);
-        
+
         // Simulate AI response
         setTimeout(() => {
           const responses = [
@@ -143,19 +165,25 @@ const VoiceAgent = () => {
             "I understand. What else would you like to discuss?",
             "Great question! Let me think about that for a moment.",
             "That's a fascinating topic. What's your experience with it?",
-            "I see what you mean. Would you like to explore this further?"
+            "I see what you mean. Would you like to explore this further?",
           ];
-          
-          const response = responses[Math.floor(Math.random() * responses.length)];
-          
-          setTranscript(prev => [...prev, {
-            id: Date.now(),
-            speaker: "Assistant",
-            text: response,
-            timestamp: new Date().toLocaleTimeString()
-          }]);
-          
-          setCurrentPrompt("I'm ready for your next question or comment. What's on your mind?");
+
+          const response =
+            responses[Math.floor(Math.random() * responses.length)];
+
+          setTranscript((prev) => [
+            ...prev,
+            {
+              id: Date.now(),
+              speaker: "Assistant",
+              text: response,
+              timestamp: new Date().toLocaleTimeString(),
+            },
+          ]);
+
+          setCurrentPrompt(
+            "I'm ready for your next question or comment. What's on your mind?"
+          );
           setIsSpeaking(false);
         }, 2000);
       }, 3000);
@@ -170,7 +198,7 @@ const VoiceAgent = () => {
   const formatDuration = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -183,13 +211,20 @@ const VoiceAgent = () => {
               <Mic className="w-5 h-5 text-background" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Voice Assistant</h1>
+              <h1 className="text-2xl font-bold text-foreground">
+                Voice Assistant
+              </h1>
               <p className="text-muted-foreground">Welcome back, User</p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-2">
-            <Badge variant={connectionStatus === "connected" ? "default" : "secondary"} className="bg-accent text-accent-foreground">
+            <Badge
+              variant={
+                connectionStatus === "connected" ? "default" : "secondary"
+              }
+              className="bg-accent text-accent-foreground"
+            >
               {connectionStatus}
             </Badge>
             {isConnected && (
@@ -215,12 +250,12 @@ const VoiceAgent = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-6">
-                <VoiceVisualizer 
-                  isListening={isListening} 
+                <VoiceVisualizer
+                  isListening={isListening}
                   isSpeaking={isSpeaking}
                   isConnected={isConnected}
                 />
-                
+
                 <div className="flex items-center justify-center space-x-4">
                   {!isConnected ? (
                     <Button
@@ -252,7 +287,7 @@ const VoiceAgent = () => {
                           </>
                         )}
                       </Button>
-                      
+
                       <Button
                         onClick={endConversation}
                         variant="destructive"
@@ -269,8 +304,8 @@ const VoiceAgent = () => {
                   <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
                     <p className="text-sm text-destructive">
                       Microphone access is required for voice conversations.
-                      <Button 
-                        variant="link" 
+                      <Button
+                        variant="link"
                         className="text-destructive underline p-0 ml-1"
                         onClick={requestMicrophonePermission}
                       >
@@ -298,12 +333,20 @@ const VoiceAgent = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Duration</span>
-                  <span className="text-sm font-medium">{formatDuration(conversationDuration)}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Duration
+                  </span>
+                  <span className="text-sm font-medium">
+                    {formatDuration(conversationDuration)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Messages</span>
-                  <span className="text-sm font-medium">{transcript.length}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Messages
+                  </span>
+                  <span className="text-sm font-medium">
+                    {transcript.length}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Status</span>
@@ -314,71 +357,6 @@ const VoiceAgent = () => {
               </CardContent>
             </Card>
           </div>
-        </div>
-
-        {/* Integration Information */}
-        <div className="mt-8">
-          <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-secondary">
-              <TabsTrigger value="overview">Demo Overview</TabsTrigger>
-              <TabsTrigger value="integration" className="flex items-center space-x-2">
-                <Settings className="w-4 h-4" />
-                <span>Integration Guide</span>
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview" className="mt-4">
-              <Card className="card-elevated border-border/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Info className="w-5 h-5" />
-                    <span>Demo Information</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-3">🎯 Current Features</h3>
-                      <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li>• Real-time voice conversation simulation</li>
-                        <li>• Live transcript with speaker identification</li>
-                        <li>• Dynamic prompt system with edit capability</li>
-                        <li>• Microphone permission management</li>
-                        <li>• Session duration tracking</li>
-                        <li>• Clean, responsive UI design</li>
-                        <li>• User authentication system</li>
-                      </ul>
-                    </div>
-                    
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-3">🔧 Next Steps</h3>
-                      <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li>• Add Bland.ai SDK integration</li>
-                        <li>• Connect Supabase for user management</li>
-                        <li>• Implement real voice streaming</li>
-                        <li>• Add conversation history persistence</li>
-                        <li>• Configure production deployment</li>
-                        <li>• Set up monitoring and analytics</li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
-                    <h4 className="font-medium text-primary mb-2">💡 Try the Demo</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Click "Start Conversation" above to experience the voice interface. 
-                      The demo simulates real conversation flow with dynamic prompts and transcripts. 
-                      In production, this would connect directly to Bland.ai for actual voice processing.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="integration" className="mt-4">
-              <IntegrationInfo />
-            </TabsContent>
-          </Tabs>
         </div>
       </div>
     </div>
