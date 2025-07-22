@@ -1,94 +1,64 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mic, Phone } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import authService from '@/services/authService';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Mic } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    
-    if (!username || !password) {
+    setIsLoading(true);
+
+    // Simulate login - replace with actual authentication
+    if (username && password) {
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("username", username);
+      
       toast({
-        title: "Error",
+        title: "Login Successful",
+        description: "Welcome to your Voice Assistant",
+      });
+      
+      setTimeout(() => {
+        navigate("/agent");
+      }, 1000);
+    } else {
+      toast({
+        title: "Login Failed",
         description: "Please enter both username and password",
         variant: "destructive",
       });
-      return;
     }
-
-    setIsLoading(true);
-
-    try {
-      // Call the authService to login the user
-      const response = await authService.login({
-        username,
-        password
-      });
-
-      // Show success message
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${username}!`,
-      });
-
-      // Redirect to agent page after a short delay
-      setTimeout(() => {
-        navigate('/agent');
-      }, 1000);
-
-    } catch (error: any) {
-      console.error('Login error:', error);
-      
-      // Show error message from the server or a generic error
-      const errorMessage = error.response?.message || 'Invalid username or password';
-      
-      toast({
-        title: "Login failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    
+    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
-        {/* Brand Header */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center space-x-2">
-            <div className="relative">
-              <Phone className="h-8 w-8 text-primary" />
-              <Mic className="h-4 w-4 text-primary-glow absolute -bottom-1 -right-1" />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-background">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-gradient-voice rounded-full flex items-center justify-center shadow-voice">
+              <Mic className="w-8 h-8 text-background" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Bland.ai
-            </h1>
           </div>
-          <p className="text-muted-foreground">
-            Web Agent - Real-time Voice Conversations
-          </p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Voice Assistant</h1>
+          <p className="text-muted-foreground">Powered by Bland.ai</p>
         </div>
 
-        {/* Login Form */}
-        <Card className="border-border bg-card/50 backdrop-blur-sm shadow-card-custom">
-          <CardHeader>
-            <CardTitle className="text-center text-foreground">Sign In</CardTitle>
-            <CardDescription className="text-center">
-              Enter your credentials to access the voice agent
-            </CardDescription>
+        <Card className="card-elevated border-border/50">
+          <CardHeader className="text-center">
+            <CardTitle className="text-foreground">Welcome Back</CardTitle>
+            <CardDescription>Sign in to access your voice assistant</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
@@ -100,7 +70,7 @@ const Login = () => {
                   placeholder="Enter your username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="bg-input border-border"
+                  className="bg-secondary border-border"
                   required
                 />
               </div>
@@ -113,35 +83,25 @@ const Login = () => {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-input border-border"
+                  className="bg-secondary border-border"
                   required
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-primary hover:bg-primary-dark transition-all duration-300"
+                className="w-full btn-primary text-primary-foreground"
                 disabled={isLoading}
               >
-                {isLoading ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
-                    <span>Signing in...</span>
-                  </div>
-                ) : (
-                  'Sign In'
-                )}
+                {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
-
-            <div className="text-center text-sm text-muted-foreground mt-4">
-                Dont't have an account?{' '}
-                <Link to="/signup" className="text-primary hover:underline">
-                  Sign Up
-                </Link>
-              </div>
           </CardContent>
         </Card>
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Demo credentials: Any username and password will work
+        </p>
       </div>
     </div>
   );

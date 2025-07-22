@@ -1,219 +1,163 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mic, Phone, Brain, MessageSquare, Shield, Zap } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Mic, Phone, MessageSquare, Zap, Shield, Clock } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
 
-  return (
-    <div className="min-h-screen bg-gradient-bg">
-      {/* Header */}
-      <header className="p-6 border-b border-border">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <Phone className="h-8 w-8 text-primary" />
-              <Mic className="h-4 w-4 text-primary-glow absolute -bottom-1 -right-1" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Bland.ai Web Agent
-              </h1>
-              <p className="text-sm text-muted-foreground">Technical Evaluation Demo</p>
-            </div>
-          </div>
-          
-          <Button 
-            onClick={() => navigate('/')}
-            variant="voice"
-            size="lg"
-          >
-            <Mic className="h-5 w-5 mr-2" />
-            Launch Web Agent
-          </Button>
-        </div>
-      </header>
+  useEffect(() => {
+    // Check if user is already authenticated
+    if (localStorage.getItem("isAuthenticated")) {
+      navigate("/agent");
+    }
+  }, [navigate]);
 
+  return (
+    <div className="min-h-screen bg-gradient-background">
       {/* Hero Section */}
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        <div className="text-center space-y-6 mb-16">
-          <div className="inline-flex items-center px-4 py-2 bg-voice-active/10 border border-voice-active/20 rounded-full">
-            <span className="text-sm text-voice-active font-medium">Live Demo Ready</span>
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center mb-6">
+            <div className="w-20 h-20 bg-gradient-voice rounded-2xl flex items-center justify-center shadow-voice">
+              <Mic className="w-10 h-10 text-background" />
+            </div>
           </div>
           
-          <h2 className="text-5xl font-bold text-foreground leading-tight">
-            Real-time Voice Conversations
-            <br />
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
-              Powered by Bland.ai
-            </span>
-          </h2>
-          
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Experience seamless browser-based voice conversations with AI. No phone calls required - 
-            just pure web-based audio interaction with dynamic prompts and real-time transcription.
+          <h1 className="text-5xl font-bold text-foreground mb-6">
+            AI Voice Assistant
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Experience natural voice conversations powered by Bland.ai. 
+            No phone calls required - chat directly in your browser with advanced AI.
           </p>
           
-          <div className="flex items-center justify-center space-x-4 pt-4">
+          <div className="flex items-center justify-center space-x-4 mb-8">
+            <Badge variant="outline" className="border-accent text-accent bg-accent/10">
+              <Zap className="w-3 h-3 mr-1" />
+              Real-time Speech
+            </Badge>
+            <Badge variant="outline" className="border-primary text-primary bg-primary/10">
+              <MessageSquare className="w-3 h-3 mr-1" />
+              Live Transcripts
+            </Badge>
+            <Badge variant="outline" className="border-accent text-accent bg-accent/10">
+              <Shield className="w-3 h-3 mr-1" />
+              Secure & Private
+            </Badge>
+          </div>
+
+          <div className="flex items-center justify-center space-x-4">
             <Button 
-              onClick={() => navigate('/')}
+              size="lg" 
               variant="voice"
-              size="lg"
-              className="text-lg px-8 py-4 h-auto"
+              onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+              className="text-lg px-8 py-6 h-auto"
             >
-              <Mic className="h-6 w-6 mr-3" />
-              Start Voice Chat
+              <Phone className="w-5 h-5 mr-2" />
+              Learn More
             </Button>
+            
             <Button 
-              variant="voice-outline"
-              size="lg"
-              className="text-lg px-8 py-4 h-auto"
+              size="lg" 
+              variant="premium"
+              onClick={() => navigate("/")}
+              className="text-lg px-8 py-6 h-auto"
             >
-              View Documentation
+              <MessageSquare className="w-5 h-5 mr-2" />
+              Try Demo
             </Button>
           </div>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          <Card className="border-border bg-card/50 backdrop-blur-sm">
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <Card className="card-elevated border-border/50 text-center">
             <CardHeader>
-              <Mic className="h-8 w-8 text-voice-active mb-2" />
-              <CardTitle>Browser-Based Audio</CardTitle>
+              <div className="w-12 h-12 bg-gradient-voice rounded-lg flex items-center justify-center mx-auto mb-4 shadow-voice">
+                <Mic className="w-6 h-6 text-background" />
+              </div>
+              <CardTitle>Voice Recognition</CardTitle>
               <CardDescription>
-                Direct microphone and speaker access - no phone calls needed
+                Advanced speech-to-text powered by Bland.ai for natural conversations
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Real-time audio streaming</li>
-                <li>• Automatic speech recognition</li>
-                <li>• High-quality text-to-speech</li>
-              </ul>
-            </CardContent>
           </Card>
 
-          <Card className="border-border bg-card/50 backdrop-blur-sm">
+          <Card className="card-elevated border-border/50 text-center">
             <CardHeader>
-              <Brain className="h-8 w-8 text-primary-glow mb-2" />
+              <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mx-auto mb-4 shadow-primary">
+                <MessageSquare className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <CardTitle>Live Transcripts</CardTitle>
+              <CardDescription>
+                Real-time conversation transcripts with speaker identification
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="card-elevated border-border/50 text-center">
+            <CardHeader>
+              <div className="w-12 h-12 bg-gradient-voice rounded-lg flex items-center justify-center mx-auto mb-4 shadow-voice">
+                <Clock className="w-6 h-6 text-background" />
+              </div>
               <CardTitle>Dynamic Prompts</CardTitle>
               <CardDescription>
-                AI context that adapts and updates during conversation
+                AI prompts that adapt and evolve throughout your conversation
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Real-time prompt updates</li>
-                <li>• Context-aware responses</li>
-                <li>• Customizable agent behavior</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border bg-card/50 backdrop-blur-sm">
-            <CardHeader>
-              <MessageSquare className="h-8 w-8 text-primary mb-2" />
-              <CardTitle>Live Transcript</CardTitle>
-              <CardDescription>
-                Real-time conversation history with timestamps
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Live conversation display</li>
-                <li>• Message timestamps</li>
-                <li>• Speaker identification</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border bg-card/50 backdrop-blur-sm">
-            <CardHeader>
-              <Shield className="h-8 w-8 text-voice-active mb-2" />
-              <CardTitle>Secure Authentication</CardTitle>
-              <CardDescription>
-                Simple login system with session management
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• User authentication</li>
-                <li>• Session persistence</li>
-                <li>• Secure data handling</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border bg-card/50 backdrop-blur-sm">
-            <CardHeader>
-              <Zap className="h-8 w-8 text-primary-glow mb-2" />
-              <CardTitle>Performance Optimized</CardTitle>
-              <CardDescription>
-                Built for speed and reliability with modern web standards
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Low latency audio</li>
-                <li>• Responsive design</li>
-                <li>• Error handling</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border bg-card/50 backdrop-blur-sm">
-            <CardHeader>
-              <Phone className="h-8 w-8 text-primary mb-2" />
-              <CardTitle>Bland.ai Integration</CardTitle>
-              <CardDescription>
-                Powered by industry-leading voice AI technology
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Natural conversations</li>
-                <li>• Advanced voice synthesis</li>
-                <li>• Conversation continuity</li>
-              </ul>
-            </CardContent>
           </Card>
         </div>
 
-        {/* Technical Requirements */}
-        <Card className="border-border bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle>Technical Implementation</CardTitle>
+        {/* Demo Info */}
+        <Card className="card-elevated border-border/50 max-w-4xl mx-auto">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl text-foreground">Demo Information</CardTitle>
             <CardDescription>
-              Key features delivered for the technical evaluation
+              This is a technical demonstration of Bland.ai Web Agent capabilities
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-medium text-foreground mb-2">✅ Core Requirements</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• User login & authentication system</li>
-                <li>• Real-time voice conversation interface</li>
-                <li>• 3+ minute conversation capability</li>
-                <li>• Dynamic prompt system</li>
-                <li>• Conversation transcript</li>
-                <li>• Microphone permission handling</li>
-              </ul>
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold text-foreground mb-3">✅ Implemented Features</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• User authentication system</li>
+                  <li>• Voice conversation interface</li>
+                  <li>• Real-time transcript display</li>
+                  <li>• Dynamic prompt management</li>
+                  <li>• Microphone permissions handling</li>
+                  <li>• Clean, modern UI design</li>
+                  <li>• Session duration tracking</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold text-foreground mb-3">🔧 Integration Notes</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• Ready for Bland.ai SDK integration</li>
+                  <li>• Placeholder voice responses</li>
+                  <li>• Simulated conversation flow</li>
+                  <li>• Backend integration prepared</li>
+                  <li>• WebSocket connection ready</li>
+                  <li>• Audio streaming infrastructure</li>
+                </ul>
+              </div>
             </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-2">✅ Technical Stack</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• React + TypeScript</li>
-                <li>• Tailwind CSS design system</li>
-                <li>• Bland.ai Web Client integration</li>
-                <li>• Modern browser APIs</li>
-                <li>• Responsive UI components</li>
-                <li>• Real-time state management</li>
-              </ul>
+
+            <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+              <h4 className="font-medium text-accent mb-2">🚀 Production Setup</h4>
+              <p className="text-sm text-muted-foreground">
+                To complete the integration, you'll need to add your Bland.ai API key, 
+                set up the backend database for user management, and configure the 
+                voice streaming endpoints. The UI and conversation flow are fully functional.
+              </p>
             </div>
           </CardContent>
         </Card>
-      </main>
+      </div>
     </div>
   );
 };

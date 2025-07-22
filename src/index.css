@@ -2,61 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Bland.ai Web Agent Design System - Modern Voice UI */
+/* Voice Assistant Design System - All colors MUST be HSL */
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Voice Assistant Color Palette */
+    --background: 220 15% 6%;
+    --foreground: 220 8% 95%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 220 12% 8%;
+    --card-foreground: 220 8% 95%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 220 12% 8%;
+    --popover-foreground: 220 8% 95%;
 
-    --primary: 142 76% 36%;
-    --primary-foreground: 0 0% 98%;
-    
-    --primary-glow: 142 76% 50%;
-    --primary-dark: 142 76% 25%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 220 15% 6%;
+    --primary-glow: 217 91% 70%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 220 12% 12%;
+    --secondary-foreground: 220 8% 85%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 220 12% 10%;
+    --muted-foreground: 220 8% 65%;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 220 15% 6%;
+    --accent-glow: 142 71% 55%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 220 8% 95%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 142 76% 36%;
+    --border: 220 12% 15%;
+    --input: 220 12% 12%;
+    --ring: 217 91% 60%;
 
-    /* Voice UI specific colors */
-    --voice-active: 142 76% 36%;
-    --voice-inactive: 240 5% 64.9%;
-    --voice-pulse: 142 76% 50%;
-    --voice-bg: 240 5% 10%;
-    
+    --voice-active: 142 71% 45%;
+    --voice-inactive: 220 8% 45%;
+    --voice-error: 0 84% 60%;
+
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-voice: linear-gradient(135deg, hsl(var(--voice-active)), hsl(var(--voice-pulse)));
-    --gradient-bg: linear-gradient(180deg, hsl(var(--background)), hsl(var(--voice-bg)));
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
+    --gradient-voice: linear-gradient(135deg, hsl(142 71% 45%), hsl(142 71% 55%));
+    --gradient-background: linear-gradient(180deg, hsl(220 15% 6%), hsl(220 15% 4%));
     
     /* Shadows */
-    --shadow-voice: 0 0 30px hsl(var(--voice-pulse) / 0.4);
-    --shadow-card: 0 4px 20px hsl(var(--background) / 0.1);
-    
-    /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-voice: all 0.2s ease-out;
+    --shadow-voice: 0 0 30px hsl(142 71% 45% / 0.3);
+    --shadow-primary: 0 10px 30px hsl(217 91% 60% / 0.2);
+    --shadow-card: 0 8px 32px hsl(220 15% 3% / 0.5);
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -120,6 +115,56 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-to-b from-background to-background/95 text-foreground min-h-screen;
+  }
+}
+
+@layer components {
+  /* Voice Visualization */
+  .voice-pulse {
+    @apply animate-pulse;
+    box-shadow: var(--shadow-voice);
+  }
+  
+  .voice-active {
+    @apply bg-accent;
+    animation: voice-glow 1.5s ease-in-out infinite alternate;
+  }
+  
+  /* Transcript animations */
+  .transcript-enter {
+    @apply animate-fade-in;
+  }
+  
+  /* Button variants */
+  .btn-voice {
+    @apply bg-accent hover:bg-accent-glow text-accent-foreground;
+    box-shadow: var(--shadow-voice);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .btn-voice:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-voice), 0 4px 20px hsl(142 71% 45% / 0.4);
+  }
+  
+  .btn-primary {
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-primary);
+  }
+  
+  /* Card enhancements */
+  .card-elevated {
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(10px);
+  }
+}
+
+@keyframes voice-glow {
+  0% {
+    box-shadow: 0 0 20px hsl(142 71% 45% / 0.4);
+  }
+  100% {
+    box-shadow: 0 0 40px hsl(142 71% 45% / 0.8), 0 0 60px hsl(142 71% 45% / 0.4);
   }
 }

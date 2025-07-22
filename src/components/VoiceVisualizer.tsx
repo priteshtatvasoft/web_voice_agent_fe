@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic, Volume2, Radio } from "lucide-react";
 
 interface VoiceVisualizerProps {
   isListening: boolean;
@@ -8,113 +7,79 @@ interface VoiceVisualizerProps {
 }
 
 const VoiceVisualizer = ({ isListening, isSpeaking, isConnected }: VoiceVisualizerProps) => {
-  const [audioLevel, setAudioLevel] = useState(0);
-
-  useEffect(() => {
-    if (isListening || isSpeaking) {
-      // Simulate audio level changes
-      const interval = setInterval(() => {
-        setAudioLevel(Math.random() * 100);
-      }, 100);
-      
-      return () => clearInterval(interval);
-    } else {
-      setAudioLevel(0);
-    }
-  }, [isListening, isSpeaking]);
-
-  const getStatusColor = () => {
-    if (!isConnected) return 'bg-muted';
-    if (isSpeaking) return 'bg-primary-glow';
-    if (isListening) return 'bg-voice-active';
-    return 'bg-voice-inactive';
+  const getVisualizerState = () => {
+    if (!isConnected) return "inactive";
+    if (isListening) return "listening";
+    if (isSpeaking) return "speaking";
+    return "ready";
   };
 
-  const getStatusText = () => {
-    if (!isConnected) return 'Disconnected';
-    if (isSpeaking) return 'Agent Speaking';
-    if (isListening) return 'Listening';
-    return 'Ready';
-  };
+  const state = getVisualizerState();
 
   return (
-    <div className="flex flex-col items-center space-y-4 py-6">
-      {/* Main Microphone Visual */}
+    <div className="flex flex-col items-center space-y-4">
+      {/* Main Voice Circle */}
       <div className="relative">
-        {/* Outer pulse rings */}
+        <div 
+          className={`
+            w-32 h-32 rounded-full flex items-center justify-center transition-all duration-500
+            ${state === "listening" ? "bg-accent voice-active shadow-voice" : ""}
+            ${state === "speaking" ? "bg-primary voice-pulse shadow-primary" : ""}
+            ${state === "ready" ? "bg-secondary hover:bg-secondary/80" : ""}
+            ${state === "inactive" ? "bg-muted" : ""}
+          `}
+        >
+          {state === "listening" && <Mic className="w-12 h-12 text-accent-foreground" />}
+          {state === "speaking" && <Volume2 className="w-12 h-12 text-primary-foreground" />}
+          {state === "ready" && <Radio className="w-12 h-12 text-secondary-foreground" />}
+          {state === "inactive" && <Mic className="w-12 h-12 text-muted-foreground" />}
+        </div>
+
+        {/* Pulsing rings for active states */}
         {(isListening || isSpeaking) && (
           <>
-            <div className="absolute inset-0 animate-voice-ring">
-              <div className={`w-32 h-32 rounded-full border-2 ${
-                isSpeaking ? 'border-primary-glow' : 'border-voice-active'
-              } opacity-20`} />
-            </div>
-            <div className="absolute inset-2 animate-voice-ring" style={{ animationDelay: '0.3s' }}>
-              <div className={`w-28 h-28 rounded-full border-2 ${
-                isSpeaking ? 'border-primary-glow' : 'border-voice-active'
-              } opacity-30`} />
-            </div>
+            <div className={`
+              absolute inset-0 rounded-full border-2 animate-ping
+              ${isListening ? "border-accent/50" : "border-primary/50"}
+            `} />
+            <div className={`
+              absolute -inset-2 rounded-full border border-opacity-30 animate-pulse
+              ${isListening ? "border-accent" : "border-primary"}
+            `} />
           </>
         )}
-        
-        {/* Main microphone circle */}
-        <div className={`
-          relative w-32 h-32 rounded-full flex items-center justify-center
-          ${getStatusColor()}
-          ${(isListening || isSpeaking) ? 'animate-voice-pulse shadow-voice' : ''}
-          transition-all duration-300
-        `}>
-          {isConnected ? (
-            <Mic className="h-12 w-12 text-primary-foreground" />
-          ) : (
-            <MicOff className="h-12 w-12 text-muted-foreground" />
-          )}
-          
-          {/* Audio level indicator */}
-          {isConnected && (
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
-              <div className="flex space-x-1">
-                {[1, 2, 3, 4, 5].map((bar) => (
-                  <div
-                    key={bar}
-                    className={`w-1 bg-primary-foreground transition-all duration-150 ${
-                      audioLevel > bar * 20 ? 'h-3' : 'h-1'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Status Text */}
       <div className="text-center">
-        <div className={`text-lg font-medium ${
-          isConnected ? 'text-foreground' : 'text-muted-foreground'
-        }`}>
-          {getStatusText()}
-        </div>
-        
-        {isConnected && (
-          <div className="text-sm text-muted-foreground mt-1">
-            {isListening && "Speak now..."}
-            {isSpeaking && "Agent is responding..."}
-            {!isListening && !isSpeaking && "Ready to listen"}
-          </div>
-        )}
+        <p className="text-lg font-medium text-foreground">
+          {state === "listening" && "Listening..."}
+          {state === "speaking" && "AI Speaking"}
+          {state === "ready" && "Ready to Listen"}
+          {state === "inactive" && "Not Connected"}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {state === "listening" && "Speak now, I'm recording your voice"}
+          {state === "speaking" && "AI is responding to your message"}
+          {state === "ready" && "Press the microphone button to speak"}
+          {state === "inactive" && "Start a conversation to begin"}
+        </p>
       </div>
 
-      {/* Visual Equalizer Bars (for speaking) */}
-      {isSpeaking && (
-        <div className="flex items-end space-x-1 h-8">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((bar) => (
+      {/* Audio Wave Visualization (simulated) */}
+      {(isListening || isSpeaking) && (
+        <div className="flex items-center space-x-1">
+          {[...Array(5)].map((_, i) => (
             <div
-              key={bar}
-              className="w-2 bg-primary-glow animate-voice-pulse rounded-t"
+              key={i}
+              className={`
+                w-1 bg-current rounded-full animate-pulse
+                ${isListening ? "text-accent" : "text-primary"}
+              `}
               style={{
-                height: `${20 + (audioLevel + bar * 10) % 50}%`,
-                animationDelay: `${bar * 0.1}s`
+                height: `${Math.random() * 20 + 10}px`,
+                animationDelay: `${i * 100}ms`,
+                animationDuration: "800ms"
               }}
             />
           ))}
