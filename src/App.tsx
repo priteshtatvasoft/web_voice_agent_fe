@@ -10,6 +10,7 @@ import Agent from "./components/Agent";
 import NotFound from "./pages/NotFound";
 import WebAgent from "./pages/WebAgent";
 import VoiceChat from "./pages/VoiceChat";
+import BlandConversation from "./pages/BlandConversation";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/agent" element={<VoiceChat />} />
+          <Route path="/agent" element={<WebAgent />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
