@@ -162,8 +162,8 @@ class BlandService {
             }
 
             // Handle transcript
-            if (callData.transcript && Array.isArray(callData.transcript)) {
-              callData.transcript.forEach((entry: any) => {
+            if (callData.transcripts && Array.isArray(callData.transcripts)) {
+              callData.transcripts.forEach((entry: any) => {
                 if (entry.text && entry.user) {
                   const speaker =
                     entry.user.toLowerCase() === "user" ? "user" : "assistant";
