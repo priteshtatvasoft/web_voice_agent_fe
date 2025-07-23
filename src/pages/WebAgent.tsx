@@ -38,22 +38,6 @@ const WebAgentPage = () => {
 
       console.log("sdk::", sdk)
 
-    //   const callId: string = sdk.callId;
-
-    //   setStartTime(Date.now());
-    //   await sdk.stopConversation();
-
-    console.log("callId::", callId);
-      const aligned = await getCorrectedTranscript(callId);
-      console.log("Aligned::", aligned);
-
-    //   aligned.forEach((item) => {
-    //     const sender = item.user === "assistant" ? "agent" : "user";
-    //     setConversation((prev) => [
-    //       ...prev,
-    //       { sender, text: item.text.trim() },
-    //     ]);
-    //   });
 
       // Later you can call sdk.stopConversation() when needed
       console.log("🔊 Voice session started.");
