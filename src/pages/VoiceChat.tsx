@@ -13,9 +13,7 @@ type Message = {
 };
 
 const VoiceChat = () => {
-  const [pathwayId, setPathwayId] = useState(
-    "77fef5e0-9480-4855-a338-7ccc60d12c92"
-  );
+  const [pathwayId, setPathwayId] = useState("");
   const [chatId, setChatId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -24,6 +22,19 @@ const VoiceChat = () => {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [apiKey, setApiKey] = useState("");
+
+  useEffect(() => {
+    const storedApiKey = import.meta.env.VITE_BLAND_API_KEY;
+    if (storedApiKey) {
+      setApiKey(storedApiKey);
+    }
+
+    const storedPathwayId = import.meta.env.VITE_PATHWAY_ID;
+    if (storedPathwayId) {
+      setPathwayId(storedPathwayId);
+    }
+  }, []);
 
   // Auto-scroll to bottom of messages
   useEffect(() => {
@@ -32,10 +43,10 @@ const VoiceChat = () => {
 
   // Create Chat after pathway
   useEffect(() => {
-    if (!pathwayId) return;
+    if (!pathwayId || !apiKey) return;
     const initChat = async () => {
       try {
-        const chat = await createChat(pathwayId);
+        const chat = await createChat(pathwayId, apiKey);
         setChatId(chat.chat_id);
         // Add welcome message
         setMessages([
@@ -46,7 +57,7 @@ const VoiceChat = () => {
       }
     };
     initChat();
-  }, [pathwayId]);
+  }, [pathwayId, apiKey]);
 
   // Handle sending prompt
   const handleSend = async (prompt: string) => {
@@ -58,14 +69,14 @@ const VoiceChat = () => {
     setInputValue("");
 
     try {
-      const res = await sendChatMessage(chatId, prompt);
+      const res = await sendChatMessage(chatId, prompt, apiKey);
       const responseText =
         res?.assistant_responses?.[0] ??
         "I couldn't process that request. Please try again.";
       setMessages((prev) => [...prev, { role: "agent", text: responseText }]);
 
       // Play the TTS audio of agent response
-      const audioUrl = await speakMessage(responseText);
+      const audioUrl = await speakMessage(responseText, apiKey);
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
         audioRef.current

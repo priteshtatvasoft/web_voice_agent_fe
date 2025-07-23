@@ -1,39 +1,43 @@
-// services/blandService.ts
-import axios from "axios";
-
-const API_KEY =
-  "org_9f8039ca6a1aea840e79edd862f876c9f300a3f20e6e61626b447cd9e41cac04ede8280d3652ae50155369"; // Store this in your .env file
-
 const US_BASE_API = "https://us.api.bland.ai/v1";
 const SPEAK_API = "https://api.bland.ai/v1/speak";
 
-const blandApi = axios.create({
-  headers: {
-    Authorization: `Bearer ${API_KEY}`,
-    "Content-Type": "application/json",
-  },
-});
-
-export const createChat = async (pathway_id: string) => {
-  const res = await blandApi.post(`${US_BASE_API}/pathway/chat/create`, {
-    start_node_id: "ad66480a-ed1a-4e05-9605-923df7d7640f",
-    pathway_id,
-  });
-  return res.data.data;
+export const createChat = async (pathway_id: string, apiKey: string) => {
+  const options = {
+    method: 'POST',
+    headers: {authorization: apiKey, 'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      pathway_id: pathway_id,
+      start_node_id: "2b65da4e-2f5e-4306-8dba-efb04ce09167"
+    })
+  };
+  const res = await fetch(`${US_BASE_API}/pathway/chat/create`, options);
+  const data = await res.json();
+  return data.data;
 };
 
-export const sendChatMessage = async (chat_id: string, prompt: string) => {
-  const res = await blandApi.post(`${US_BASE_API}/pathway/chat/${chat_id}`, {
-    prompt,
+export const sendChatMessage = async (
+  chat_id: string,
+  prompt: string,
+  apiKey: string
+) => {
+  const res = await fetch(`${US_BASE_API}/pathway/chat/${chat_id}`, {
+    method: "POST",
+    headers: {
+      Authorization: apiKey,
+    },
+    body: JSON.stringify({
+      prompt,
+    }),
   });
-  return res.data.data;
+  const data = await res.json();
+  return data.data;
 };
 
-export const speakMessage = async (text: string) => {
+export const speakMessage = async (text: string, apiKey: string) => {
   const res = await fetch(SPEAK_API, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${API_KEY}`,
+      Authorization: apiKey,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

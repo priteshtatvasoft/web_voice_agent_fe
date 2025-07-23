@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-const BLAND_API_KEY = "Bearer org_9f8039ca6a1aea840e79edd862f876c9f300a3f20e6e61626b447cd9e41cac04ede8280d3652ae50155369";
+const BLAND_API_KEY = import.meta.env.VITE_BLAND_API_KEY;
 const BLAND_API_URL = "https://api.bland.ai/v1";
 
 export default function VoiceAgent() {
