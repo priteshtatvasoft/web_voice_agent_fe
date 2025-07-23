@@ -168,3 +168,53 @@
     box-shadow: 0 0 40px hsl(142 71% 45% / 0.8), 0 0 60px hsl(142 71% 45% / 0.4);
   }
 }
+
+.tts-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+}
+
+.tts-container h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 1rem;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.controls button {
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.controls button:hover {
+  background-color: #45a049;
+}
+
+.controls button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.info {
+  margin-top: 1.5rem;
+  color: #666;
+  font-size: 14px;
+}
