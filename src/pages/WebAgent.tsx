@@ -8,6 +8,7 @@ import {
   getSessionToken,
 } from "@/lib/blandService";
 import { v4 as uuidv4 } from "uuid";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 
 interface Message {
   sender: "user" | "agent";
@@ -19,8 +20,7 @@ const WebAgentPage = () => {
   const [conversation, setConversation] = useState<Message[]>([]);
   const [prompt, setPrompt] = useState("Say hello to start the conversation");
   const [error, setError] = useState<string | null>(null);
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const sdkRef = useRef<BlandWebClient | null>(null);
+  const sdkRef = useRef<any>(null);
   const callId = uuidv4();
 
   const startBlandVoiceChat = async () => {
@@ -37,7 +37,6 @@ const WebAgentPage = () => {
       });
 
       console.log("sdk::", sdk)
-
 
       // Later you can call sdk.stopConversation() when needed
       console.log("🔊 Voice session started.");
